@@ -1,0 +1,250 @@
+
+/* #alert-close{
+  background-color: transparent;
+  background-position: center;
+  background-repeat: none;
+  background-image: url('../media/cancel-black-18dp.svg');
+  height: 16px;
+  width:16px;
+} */
+
+/*Image CSS**/
+
+.image-carrousel {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.image-detail-container {
+  display: grid;
+  grid-template-columns: 85% 15%;
+  flex-direction: column;
+  margin: 2rem;
+}
+
+.image-card {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px 0 rgba(78, 77, 77, 0.2), 0 6px 20px 0 rgba(136, 136, 136, 0.19);
+  width: 600px;
+  height: 600px;
+}
+
+.delete {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  height: 2rem;
+  width: 2rem;
+  margin-bottom: 1rem;
+  justify-self: flex-end;
+  align-self: flex-end;
+}
+
+.image-delete-btn {
+  background-image: url("../media/trash.svg");
+  background-size: cover;
+}
+
+.image-author {
+  font-size: large;
+  font-weight: 600;
+  margin-top:1rem;
+}
+
+.image-date {
+  font-weight: bold;
+  color:black;
+  font-size: medium;
+}
+
+.image-title {
+  font-size: 2rem;
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.posted-image {
+  height: 100%;
+  width: 100%;
+}
+
+.scroll-btn {
+  background-color: transparent;
+  border: none;
+  background-repeat: no-repeat;
+  height: 100px;
+  width: 100px;
+  background-size: cover;
+}
+
+.left-btn {
+  background-image: url("../media/caret-left-fill.svg");
+}
+
+.right-btn {
+  background-image: url("../media/caret-right-fill.svg");
+}
+
+/*https://gradientbuttons.colorion.co/*/
+
+.grad-btn {
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  width: 10%;
+  align-self: flex-end;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  border: none;
+  display: block;
+  background-image: linear-gradient(
+    to right,
+    #ff6e7f 0%,
+    #bfe9ff 51%,
+    #ff6e7f 100%
+  );
+}
+
+/***/
+.grad-btn {
+  background-position: right center; /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+}
+
+/**Comment CSS*/
+
+#comments {
+  width: 80%;
+  align-self: center;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.show-comments {
+  font-size: xx-large;
+  font-weight: 600;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.comment {
+  display: flex;
+  align-content: space-around;
+  border-bottom: 3px #cccccc solid;
+  align-items: center;
+  margin-top: 1rem;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.comment-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: flex-start;
+  margin-right: 0.1rem;
+  margin-left: 0.2rem;
+}
+
+.comment-picture {
+  height: 70px;
+  width: 70px;
+}
+
+.comment-author {
+  font-size: large;
+  font-weight: 600;
+}
+
+.comment-delete-btn {
+  height: 50px;
+  width: 50px;
+  align-self: flex-end;
+  background-position: center;
+  background-size: cover;
+  background-image: url("../media/trash2.svg");
+}
+
+.comment-content {
+  align-self: center;
+  display: flex;
+  flex-wrap: nowrap;
+  flex: 2 1 auto;
+  margin-left: 2%;
+  justify-content: center;
+  align-items: center;
+  font-weight: 400;
+  font-size: 25px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.comment-btns-container{
+  display:flex;
+  background-repeat: no-repeat;
+  width:100%;
+  height:100px;
+  font-size: 40px;
+  justify-content: space-between;
+}
+
+.comment-btn{
+  border:none;
+  background-color: transparent;
+  background-size: 100%;
+  background-position: center;
+  padding: 18px;
+}
+
+.comment-btn-right{
+  background-image: url('../media/arrow-right-circle-fill.svg');
+  background-repeat: no-repeat;
+}
+
+.comment-btn-left{
+  background-image: url('../media/arrow-left-circle-fill.svg');
+  background-repeat: no-repeat;
+}
+
+/* https://www.w3schools.com/howto/howto_js_alert.asp */
+
+#alert{
+  padding: 10px;
+  background-color: rgb(207, 50, 33); /* Red */
+  color: white;
+  margin: 15px;
+  display: flex;
+}
+
+#alert-message{
+  font-size: 25px;
+  padding-left: 1.5rem;
+  line-height: 20px;
+  flex-grow: 4;
+  align-self: center;
+}
+
+#alert-close{
+  margin:15px;
+  color: white;
+  size:22px;
+  font-size: 22px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#alert-close:hover{
+  color:black;
+}

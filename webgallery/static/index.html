@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Web Gallery</title>
+  <link href="style/main.css" rel="stylesheet" type="text/css" />
+  <link href="style/display.css" rel="stylesheet" type="text/css" />
+  <link href="style/forms.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <header id="page-header">
+    <a href="/" id="title">Web Gallery</a>
+    <a href="/login.html" class="grad-btn" id="signin_button"><span class="header-btn-text">Sign In/Sign Up</span></a>
+    <a href="/api/signout/" class="grad-btn" id="signout_button"><span class="header-btn-text">Sign Out</span></a>
+  </header>
+  <div id="app-container">
+    <div id="alert" >
+      <span id="alert-message">Hello world</span>
+      <span id="alert-close"> &times;</span>
+    </div>
+    <button class="grad-btn" id="hide-show-btn">Hide/Show Form</button>
+    <div id="image-form-container" class="form-container">
+      <form id="image-form" class="complex_form">
+        <span class="form_title"> Post a picture </span>
+        <input type="text" id="image-title" required name="image-title" class="form_element"
+          placeholder="Enter title for image" required />
+          <input type="file" id="upload-picture" class="form_element" name="picture" accept="image/*"/>
+        <button class="submit-btn btn" type="submit"><span>Post</span></button>
+      </form>
+    </div>
+      <div class="image-carrousel">
+        <button class="scroll-btn left-btn"></button>
+        
+          <div class="image-card">
+            <button class="image-delete-btn delete"></button>
+            <div class="image-container">
+              <img class="posted-image" alt="No Image Available" src="" />
+            </div>
+            <div class="image-detail-container">
+              <span class="image-title">
+                Dummy Title
+              </span>
+              <span class="image-date">
+                20/02/12
+              </span>
+              <span class="image-author">
+                Dummy Author
+              </span>
+            </div>  
+          </div>
+        <button class="scroll-btn right-btn"></button>
+      </div>
+    <div id="comment-form-container" class="form-container">
+      <form id="comment-form" class="complex_form">
+        <span class="form_title"> Comment </span>
+        <input type="text" required name="comment" id="comment-content" class="form_element" placeholder="Enter Comment"
+          label="comment" required />
+        <button class="submit-btn btn" type="submit"><span>Comment</span></button>
+      </form>
+    </div>
+  
+    <div id="comments" class="comments-container">
+      <span class="show-comments">Comments</span>
+      <div id="comments-box">
+          <!-- 
+              <div class="comment">  
+              <div class="comment-user">
+                  <img class="comment-picture" src="media/man.svg" />
+                  <div class="comment-author">${comment.author}</div>
+                  </div>
+                   <div class="comment-content">
+                   ${comment.content}
+                  </div>
+                  <div class="comment-btns">
+                  <button class="comment-delete-btn delete">  </button>
+                  </div>
+          </div>
+          -->
+      </div> 
+      <div class="comment-btns-container">
+        <div>
+        <button class="comment-btn-left comment-btn"></button>
+        </div>
+        <span class="page"></span>
+        <div>
+          <button class="comment-btn-right comment-btn"></button>
+        </div>
+      </div>
+    </div>
+
+   
+    
+    </div>
+    <footer class="footer">
+      <a href="credits.html"> Credits </a>
+    </footer>
+  </div>
+  <script src="js/api.js"></script>
+  <script src="js/index.js"></script>
+</body>
+
+</html>
