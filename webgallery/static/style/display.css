@@ -243,33 +243,3 @@
   background-repeat: no-repeat;
 }
 
-/* https://www.w3schools.com/howto/howto_js_alert.asp */
-
-#alert{
-  padding: 10px;
-  background-color: rgb(207, 50, 33); /* Red */
-  color: white;
-  margin: 15px;
-  display: flex;
-}
-
-#alert-message{
-  font-size: 25px;
-  padding-left: 1.5rem;
-  line-height: 20px;
-  flex-grow: 4;
-  align-self: center;
-}
-
-#alert-close{
-  margin:15px;
-  color: white;
-  size:22px;
-  font-size: 22px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-#alert-close:hover{
-  color:black;
-}
