@@ -3,19 +3,18 @@
 
 	let IMAGE_ID;
 
-
 	document.querySelector('#alert-close').addEventListener('click', function(event) {
 		document.querySelector('#alert').style.visibility = 'hidden';
 	});
 
 	api.onUserUpdate(function(username) {
-		document.querySelector('#signin_button').style.visibility = username ? 'hidden' : 'visible';
+		//document.querySelector('#signin_button').style.visibility = username ? 'hidden' : 'visible';
 		document.querySelector('#signout_button').style.visibility = username ? 'visible' : 'hidden';
 		document.querySelector('#image-form-container').style.visibility = username ? 'visible' : 'hidden';
 		document.querySelector('#comment-form-container').style.visibility = username ? 'visible' : 'hidden';
 		document.querySelector('#hide-show-btn').style.visibility = username ? 'visible' : 'hidden';
-		if(!username){
-			window.location.href = "http://localhost:3000/login.html";
+		if (!username) {
+			window.location.href = 'http://localhost:3000/login.html';
 		}
 	});
 
@@ -32,10 +31,11 @@
 	const renderImage = function(image) {
 		const element = document.querySelector('.image-carrousel');
 		if (image) {
-			element.style.visibility="visible";
+			element.style.visibility = 'visible';
+			document.querySelector('#comments').style.visibility="visible";
 			let date = new Date(image.date);
 			IMAGE_ID = image._id;
-			element.innerHTML= `
+			element.innerHTML = `
 			<button class="scroll-btn left-btn"></button>
 			<div class="image-card">
             <button class="image-delete-btn delete"></button>
@@ -55,35 +55,33 @@
             </div>  
 			</div>
 			<button class="scroll-btn right-btn"></button>
-          `
+          `;
 
 			element.querySelector('.image-delete-btn.delete').onclick = function(event) {
-				api.deleteImage(image._id,function(deleted){
-					if(deleted){
+				api.deleteImage(image._id, function(deleted) {
+					if (deleted) {
 						api.changeImage(image.next._id);
 					}
 				});
-				
 			};
 
 			element.querySelector('.scroll-btn.left-btn').onclick = function(event) {
-				console.log(image.previous);
 				api.changeImage(image.previous._id);
 			};
 			element.querySelector('.scroll-btn.right-btn').onclick = function(event) {
-				console.log(image.next);
 				api.changeImage(image.next._id);
 			};
-		}else{
-			element.style.visibility="hidden";
+		} else {
+			element.style.visibility = 'hidden';
+			document.querySelector('#comments').style.visibility="hidden";
 		}
 	};
 
 	const renderComments = function(res, page = 1) {
 		const { previous, next, comments } = res;
 		document.querySelector('#comments-box').innerHTML = '';
-		if (comments && comments.length !==0) {
-			document.querySelector('#comments').style.visibility="visible";
+		if (comments && comments.length !== 0) {
+			document.querySelector('#comments').style.visibility = 'visible';
 			comments.forEach(function(comment) {
 				let elmt = document.createElement('div');
 				elmt.className = 'comment';
@@ -121,15 +119,17 @@
 				}
 			};
 			Buttons.querySelector('.page').innerHTML = `${page}`;
-		}else{
-			document.querySelector('#comments').style.visibility="hidden";
+		} else {
+			document.querySelector('#comments').style.visibility = 'hidden';
 		}
 	};
 
-	api.onImageUpdate((image)=>{renderImage(image);
-	api.onCommentUpdate(image._id,function(comments){
-		renderComments(comments);
-	})});
+	api.onImageUpdate((image) => {
+		renderImage(image);
+		api.onCommentUpdate(image._id, function(comments, page) {
+			renderComments(comments, page);
+		});
+	});
 
 	window.addEventListener('load', function() {
 		/**********************************************/
@@ -151,7 +151,6 @@
 				});
 			}
 		});
-
 
 		document.getElementById('image-form').addEventListener('submit', function(event) {
 			event.preventDefault();
@@ -180,7 +179,7 @@
 		document.getElementById('hide-show-btn').addEventListener('click', function() {
 			let element = document.getElementById('image-form-container');
 			const visibility = element.style.visibility;
-			 element.style.visibility = visibility ==="hidden" ?"visible":"hidden";
+			element.style.visibility = visibility === 'hidden' ? 'visible' : 'hidden';
 		});
 		/******Image and Comment Renderer**************/
 	});

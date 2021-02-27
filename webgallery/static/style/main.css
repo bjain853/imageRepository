@@ -43,9 +43,35 @@ footer{
     flex-direction: column;
     justify-content: center;
     align-items:stretch;
-
 }
 
-.alert{
-    color: red;
-}
+/* https://www.w3schools.com/howto/howto_js_alert.asp */
+
+#alert{
+    padding: 10px;
+    background-color: rgba(255, 7, 7, 0.548); /* Red */
+    color: white;
+    margin: 15px;
+    display: flex;
+  }
+  
+  #alert-message{
+    font-size: 25px;
+    padding-left: 1.5rem;
+    line-height: 20px;
+    flex-grow: 4;
+    align-self: center;
+  }
+  
+  #alert-close{
+    margin:15px;
+    color: white;
+    size:22px;
+    font-size: 22px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  #alert-close:hover{
+    color:black;
+  }

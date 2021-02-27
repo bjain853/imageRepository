@@ -5,30 +5,34 @@
     <title>Webgallery</title>
     <link href="style/main.css" rel="stylesheet" type="text/css"/>
     <link href="style/forms.css" rel="stylesheet" type="text/css"/>
-    <link href="style/display.css" rel="stylesheet" type="text/css"/>
+    <link rel = "icon" href =  
+    "https://thumbs.dreamstime.com/b/wg-initial-letter-vector-logo-icon-206611856.jpg" 
+            type = "image/x-icon"> 
 </head>
 <body>
-    <header>
-        <a href="/" id="title">Webgallery</a>
-    </header>
-    
-    <div id="alert" >
-        <span id="alert-message">Hello world</span>
-        <span id="alert-close"> &times;</span>
-      </div>
-    
-    <form class="complex_form">
-      <input type="text" name="username" class="form_element" placeholder="Enter a username" required/>
-      <input type="password" name="password" class="form_element" placeholder="Enter a password" required/>
-      <div>
-          <button id="signin" name="action" class="btn">Sign in</button>
-          or <button id="signup" name="action" class="btn">Sign up</button>
-        </div>
-    </form>
-    
-    <footer>
-        <a href='/credits.html'>credits</a>
-    </footer>
+    <div id="app-container">
+        <header>
+            <a href="/" id="title">Webgallery</a>
+        </header>
+        
+        <div id="alert" >
+            <span id="alert-message">Hello world</span>
+            <span id="alert-close"> &times;</span>
+          </div>
+        
+        <form class="complex_form">
+          <input type="text" name="username" class="form_element" placeholder="Enter a username" required/>
+          <input type="password" name="password" class="form_element" placeholder="Enter a password" required/>
+          <div>
+              <button id="signin" name="action" class="btn">Sign in</button>
+              or <button id="signup" name="action" class="btn">Sign up</button>
+            </div>
+        </form>
+        
+        <footer>
+            <a href='/credits.html'>credits</a>
+        </footer>
+    </div>
     <script src="js/api.js"></script>
     <script src="js/login.js"></script>
 </body>

@@ -140,23 +140,6 @@ const api = (function() {
 		});
 	};
 
-	module.getNextImage = function(imageId) {
-		send('GET', `/api/image/${imageId}/next/`, null, function(err, nextImage) {
-			if (err) return notifyErrorListeners(err);
-			else if (nextImage._id !== imageId) return changeImage(nextImage._id);
-		});
-	};
-
-	module.getPrevImage = function(imageId) {
-		send('GET', `/api/image/${imageId}/prev/`, null, function(err, prevImage) {
-			if (err) return notifyErrorListeners(err);
-			else {
-				if (prevImage._id !== imageId) {
-					return changeImage(prevImage._id);
-				}
-			}
-		});
-	};
 
 	const notifyImageListeners = function(image) {
 		imageListeners.forEach(function(listener) {
@@ -226,8 +209,6 @@ const api = (function() {
 			});
 		}
 	};
-
-
 	/**
 	 * 
 	 * Errors
