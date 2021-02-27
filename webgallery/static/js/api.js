@@ -25,6 +25,7 @@ const api = (function() {
 	function send(method, url, data, callback) {
 		let xhr = new XMLHttpRequest();
 		xhr.onload = function() {
+			if(xhr.status === 204) callback(null,null);
 			if (xhr.status !== 200) callback('[' + xhr.status + ']' + xhr.responseText, null);
 			else callback(null, JSON.parse(xhr.responseText));
 		};
@@ -74,13 +75,6 @@ const api = (function() {
 		});
 	};
 
-	// module.signout = function() {
-	// 	send("GET",'/api/signout/',null,function(err,res){
-	// 		if(err) notifyErrorListeners(err);
-	// 		else notifyUserListeners(res);
-
-	// 	});
-	// };
 
 	module.onUserUpdate = function(listener){
 		userListeners.push(listener);
@@ -89,11 +83,9 @@ const api = (function() {
 
 	const getUsername = function(callback){
         send("GET","/api/user/",null,function(err,res){
-			console.log(res.user);
             if(err) notifyErrorListeners(err);
             return  callback(res.user);
-        })
-        //return document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        });
     };
 	
 
@@ -112,7 +104,7 @@ const api = (function() {
 		send('GET', `/api/image/${imageId}/info/`, null, callback);
 	};
 
-	const changeImage = function(imageId) {
+	module.changeImage = function(imageId) {
 		getImage(imageId, function(err, res) {
 			if (err) return notifyErrorListeners(err);
 			else {
@@ -130,12 +122,11 @@ const api = (function() {
 	};
 
 	// delete an image from the gallery given its imageId
-	module.deleteImage = function(imageId) {
-		console.error(imageId);
+	module.deleteImage = function(imageId,listner) {
 		send('DELETE', `/api/image/${imageId}/`, null, function(err, res) {
 			if (err) return notifyErrorListeners(err);
-			else {
-				 return notifyImageListeners(res);
+			else {	
+				 return listner(res.deleted);
 			}
 		});
 	};
@@ -236,12 +227,6 @@ const api = (function() {
 		}
 	};
 
-	module.commentsAreEmpty = function(callback) {
-		send('GET', '/api/commentsAreEmpty', null, function(err, res) {
-			if (err) return notifyErrorListeners(err);
-			else return callback(res.empty);
-		});
-	};
 
 	/**
 	 * 

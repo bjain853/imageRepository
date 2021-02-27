@@ -17,7 +17,6 @@
         });
         
         api.onUserUpdate(function(username){
-            console.log(username);
             if (username) window.location.href = 'http://localhost:3000/';
         });
         

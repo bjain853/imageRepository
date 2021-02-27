@@ -3,21 +3,21 @@
 
 	let IMAGE_ID;
 
+
 	document.querySelector('#alert-close').addEventListener('click', function(event) {
 		document.querySelector('#alert').style.visibility = 'hidden';
 	});
 
-
-
-	api.onUserUpdate(function(username){
-		console.log(username);
-		document.querySelector("#signin_button").style.visibility = (username)? 'hidden' : 'visible';
-		document.querySelector("#signout_button").style.visibility = (username)? 'visible' : 'hidden';
-		document.querySelector('#image-form-container').style.visibility = (username)? 'visible' : 'hidden';
-		document.querySelector('#comment-form-container').style.visibility = (username)? 'visible' : 'hidden';
-		document.querySelector('#hide-show-btn').style.visibility = (username)? 'visible' : 'hidden';
-});
-
+	api.onUserUpdate(function(username) {
+		document.querySelector('#signin_button').style.visibility = username ? 'hidden' : 'visible';
+		document.querySelector('#signout_button').style.visibility = username ? 'visible' : 'hidden';
+		document.querySelector('#image-form-container').style.visibility = username ? 'visible' : 'hidden';
+		document.querySelector('#comment-form-container').style.visibility = username ? 'visible' : 'hidden';
+		document.querySelector('#hide-show-btn').style.visibility = username ? 'visible' : 'hidden';
+		if(!username){
+			window.location.href = "http://localhost:3000/login.html";
+		}
+	});
 
 	api.onError(function(err) {
 		console.error('[error]', err);
@@ -32,45 +32,64 @@
 	const renderImage = function(image) {
 		const element = document.querySelector('.image-carrousel');
 		if (image) {
-			element.style.display = 'flex';
-			element.id = image._id;
-			IMAGE_ID = image._id;
-			let title = element.querySelector('.image-title');
-			let author = element.querySelector('.image-author');
-			let imageElem = element.querySelector('.posted-image');
-			let dateElem = element.querySelector('.image-date');
+			element.style.visibility="visible";
 			let date = new Date(image.date);
-			title.innerHTML = image.title;
-			author.innerHTML = image.author;
-			imageElem.src = `/api/images/${image._id}/`;
-			imageElem.alt = image.title;
-			dateElem.innerHTML = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+			IMAGE_ID = image._id;
+			element.innerHTML= `
+			<button class="scroll-btn left-btn"></button>
+			<div class="image-card">
+            <button class="image-delete-btn delete"></button>
+            <div class="image-container">
+              <img class="posted-image" alt="No Image Available" src="/api/images/${image._id}/" />
+            </div>
+            <div class="image-detail-container">
+              <span class="image-title">
+                ${image.title}
+              </span>
+              <span class="image-date">
+			  ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}
+              </span>
+              <span class="image-author">
+                ${image.author}
+              </span>
+            </div>  
+			</div>
+			<button class="scroll-btn right-btn"></button>
+          `
 
 			element.querySelector('.image-delete-btn.delete').onclick = function(event) {
-				api.deleteImage(image._id);
+				api.deleteImage(image._id,function(deleted){
+					if(deleted){
+						api.changeImage(image.next._id);
+					}
+				});
+				
 			};
 
 			element.querySelector('.scroll-btn.left-btn').onclick = function(event) {
-                
-				api.getPrevImage(image._id);
+				console.log(image.previous);
+				api.changeImage(image.previous._id);
 			};
 			element.querySelector('.scroll-btn.right-btn').onclick = function(event) {
-				api.getNextImage(image._id);
+				console.log(image.next);
+				api.changeImage(image.next._id);
 			};
+		}else{
+			element.style.visibility="hidden";
 		}
 	};
 
-	const renderComments = function(res, page=1) {
-		const { previous, next ,comments} = res;
+	const renderComments = function(res, page = 1) {
+		const { previous, next, comments } = res;
 		document.querySelector('#comments-box').innerHTML = '';
-		if(comments){
-            comments.forEach(function(comment) {
-                let elmt = document.createElement('div');
-                elmt.className = 'comment';
-                elmt.id = comment._id;
-                let date = new Date(comment.date);
-                elmt.innerHTML = 
-				`
+		if (comments && comments.length !==0) {
+			document.querySelector('#comments').style.visibility="visible";
+			comments.forEach(function(comment) {
+				let elmt = document.createElement('div');
+				elmt.className = 'comment';
+				elmt.id = comment._id;
+				let date = new Date(comment.date);
+				elmt.innerHTML = `
                 <div class="comment-user">
                 <img class="comment-picture" src="media/man.svg" />
                 <div class="comment-author">${comment.author}</div>
@@ -82,74 +101,57 @@
                 <div class="comment-btns">
                 <button class="comment-delete-btn delete"> </button>
                 </div>`;
-    
-                elmt.querySelector('.comment-delete-btn.delete').addEventListener('click', function(event) {
-                    api.deleteComment(comment._id);
-                });
-                document.querySelector('#comments-box').prepend(elmt);
-            });
-    
-            let Buttons = document.querySelector('.comment-btns-container');
-    
-            Buttons.querySelector('.comment-btn-right.comment-btn').onclick = function(event) {
-                if (next) {
-                    api.changePage(IMAGE_ID, next);
-                }
-            };
-            Buttons.querySelector('.comment-btn-left.comment-btn').onclick = function(event) {
-                if (previous) {
-                    api.changePage(IMAGE_ID, previous);
-                }
-            };
-            Buttons.querySelector('.page').innerHTML = `${page}`;
-        }
+
+				elmt.querySelector('.comment-delete-btn.delete').addEventListener('click', function(event) {
+					api.deleteComment(comment._id);
+				});
+				document.querySelector('#comments-box').prepend(elmt);
+			});
+
+			let Buttons = document.querySelector('.comment-btns-container');
+
+			Buttons.querySelector('.comment-btn-right.comment-btn').onclick = function(event) {
+				if (next) {
+					api.changePage(IMAGE_ID, next);
+				}
+			};
+			Buttons.querySelector('.comment-btn-left.comment-btn').onclick = function(event) {
+				if (previous) {
+					api.changePage(IMAGE_ID, previous);
+				}
+			};
+			Buttons.querySelector('.page').innerHTML = `${page}`;
+		}else{
+			document.querySelector('#comments').style.visibility="hidden";
+		}
 	};
 
-	api.onImageUpdate(function(image) {
-        api.isImagesEmpty(function(empty){
-            if(empty){
-                document.querySelector('.image-carrousel').style.visibility = 'hidden';
-                document.querySelector('#comments').style.visibility = 'hidden';
-            }else{
-                document.querySelector('.image-carrousel').style.visibility = 'visible';
-                document.querySelector('#comments').style.visibility = 'visible';
-                renderImage(image);
-                api.onCommentUpdate(image._id, function(comments,page) {
-                    renderComments(comments,page);
-                });   
-            }
-        })
-	});
-
-	
+	api.onImageUpdate((image)=>{renderImage(image);
+	api.onCommentUpdate(image._id,function(comments){
+		renderComments(comments);
+	})});
 
 	window.addEventListener('load', function() {
 		/**********************************************/
-	
 
-		document.querySelector('#alert').style.visibility="hidden";
+		document.querySelector('#alert').style.visibility = 'hidden';
 
 		api.isImagesEmpty(function(empty) {
-			const element = document.querySelector('.image-carrousel');
 			if (empty) {
-				element.style.visibility = 'hidden';
 				document.querySelector('.image-carrousel').style.visibility = 'hidden';
-                document.querySelector('#comments').style.visibility = 'hidden';
+				document.querySelector('#comments').style.visibility = 'hidden';
 			} else {
-				element.style.visibility = 'visible';
 				document.querySelector('.image-carrousel').style.visibility = 'visible';
-                document.querySelector('#comments').style.visibility = 'visible';
-				api.getDefaultImage(function(image) {
+				document.querySelector('#comments').style.visibility = 'visible';
+				api.getDefaultImage((image) => {
 					renderImage(image);
-					api.onCommentUpdate(image._id, function(comments,currentPage) {
-                       
-						if (comments.comments.length !== 0) {
-							renderComments(comments, currentPage);
-						}
+					api.onCommentUpdate(image._id, function(comments, page) {
+						renderComments(comments, page);
 					});
 				});
 			}
 		});
+
 
 		document.getElementById('image-form').addEventListener('submit', function(event) {
 			event.preventDefault();
@@ -158,8 +160,6 @@
 			let picture = document.querySelector('#upload-picture').files[0];
 			// clean form
 			api.addImage(title, picture);
-
-			// create a new message element
 			document.querySelector('#image-form').reset();
 		});
 
@@ -178,13 +178,9 @@
 		});
 
 		document.getElementById('hide-show-btn').addEventListener('click', function() {
-			//https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
 			let element = document.getElementById('image-form-container');
-			if (element.style.display === 'none') {
-				element.style.display = 'flex';
-			} else {
-				element.style.display = 'none';
-			}
+			const visibility = element.style.visibility;
+			 element.style.visibility = visibility ==="hidden" ?"visible":"hidden";
 		});
 		/******Image and Comment Renderer**************/
 	});
