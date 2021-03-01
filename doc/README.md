@@ -21,8 +21,11 @@
 - response : 404 
   - content-type: `application/json`
     - body : (string) Comment content not provided
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
 ``` 
-$ curl -X POST -H "Content-Type: `application/json`"     -d '{"content":"hello world","imageId":"_ejfd4u382"}     http://localhost:3000/api/comments/'
+$ curl -b cookie.txt -i -X POST -H "Content-Type: application/json" -d "{\"content\":\"Beautiful picture\",\"imageId\":\"_cjdsvh765\"}" http://localhost:3000/api/comments/
 ```
 
 ### Read
@@ -39,9 +42,12 @@ $ curl -X POST -H "Content-Type: `application/json`"     -d '{"content":"hello w
 - response : 404
   - content-type: `application.json`
   - body : (string)  Id : :id is invalid
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
  
 ``` 
-$ curl http://localhost:3000/api/image/_hwehb7438/comments/1/4/
+$ curl -b cookie.txt  http://localhost:3000/api/image/_hwehb7438/comments/1/4/
 ``` 
   
   
@@ -62,9 +68,12 @@ $ curl http://localhost:3000/api/image/_hwehb7438/comments/1/4/
   - body :  Comment with id: :id doesn't exist
 - response : 500
   - body :  Comment id :id can't be deleted
-
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
+  
 ``` 
-$ curl -X DELETE http://localhost:3000/api/comments/_hasgy754/
+$ curl -b cookie.txt -X DELETE http://localhost:3000/api/comments/_hasgy754/
 ``` 
 
 ## Image API
@@ -98,6 +107,9 @@ $ curl -X DELETE http://localhost:3000/api/comments/_hasgy754/
 - response : 404
   - content-type : `application/json`
   - body : (string) Bad Request 
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
 
 ``` 
 $ curl -i -F "title=Batman" -F "picture=@/path/to/pic.jpg" http://localhost:3000/api/images/
@@ -113,6 +125,9 @@ $ curl -i -F "title=Batman" -F "picture=@/path/to/pic.jpg" http://localhost:3000
 - response : 404
     - content-type: `application/json`
       - Image with imageId : id does not exist
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
  
 ``` 
 $ curl -b cookie.txt http://localhost:3000/api/images/_nxjabsj987/
@@ -143,6 +158,9 @@ $ curl -b cookie.txt http://localhost:3000/api/images/_nxjabsj987/
 - response : 400
   - content-type : `application/json`
     - body : (string) Bad Request 
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
  
 ``` 
 $ curl -b cookie.txt http://localhost:3000/api/image/_nxjabsj987/info/
@@ -158,6 +176,9 @@ $ curl -b cookie.txt http://localhost:3000/api/image/_nxjabsj987/info/
   - content-type : `application/json`
   - body : Object
   -  err : error which occured during querying database.
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
  
 ``` 
 $ curl -b cookie.txt http://localhost:3000/api/imagesIsEmpty/
@@ -184,7 +205,9 @@ $ curl -b cookie.txt http://localhost:3000/api/imagesIsEmpty/
 - response : 501
   - content-type: `application/json`
     - body : (string) Comments related to image cannot be deleted
-- 
+- response : 403
+  - content-type: `application/json`
+    - body: (string) Access Denied  
 
 ``` 
 $ curl -X DELETE http://localhost:3000/api/image/_jed5672j/

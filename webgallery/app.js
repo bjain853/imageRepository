@@ -19,7 +19,7 @@ app.use(
 		secret: 'HolaGallery',
 		resave: true,
 		saveUninitialized: true,
-		cookie: { maxAge: 10000 * 3600 * 24 }
+		cookie: { maxAge: 60 * 60 * 24 * 7  }
 	})
 );
 
@@ -40,7 +40,7 @@ const ID = function() {
 
 const isAuthenticated = function(req, res, next) {
 	if (!req.username) {
-		return res.status(403).end('access denied');
+		return res.status(403).json('Access Denied');
 	}
 	next();
 };
@@ -48,7 +48,7 @@ const isAuthenticated = function(req, res, next) {
 const canDeleteImage = function(req, res, next) {
 	pictures.findOne({ _id: req.params.id }, function(err, image) {
 		if (err) return res.status(500).json(err);
-		else if (!image || !req.username || image.author !== req.username) return res.status(403).end('access denied');
+		else if (!image || !req.username || image.author !== req.username) return res.status(403).json('Access Denied');
 		next();
 	});
 };
@@ -56,7 +56,7 @@ const canDeleteImage = function(req, res, next) {
 const canDeleteComments = function(req, res, next) {
 	comments.findOne({ _id: req.params.id }, function(err, comment) {
 		if (err) return res.status(500).json(err);
-		else if (!comment || comment.author !== req.username) return res.status(403).end('access denied');
+		else if (!comment || comment.author !== req.username) return res.status(403).json('Access Denied');
 		next();
 	});
 };
@@ -111,7 +111,7 @@ app.post('/api/signin/', function(req, res) {
 	let salt = `#$^$&&^${username}#$^^*&(*))`;
 	// retrieve user from the database
 	if(!username || !password){
-		res.send(400).send("Username/Password not provided");
+		return res.send(400).send("Username/Password not provided");
 	}
 	users.findOne({ _id: username }, function(err, user) {
 		if (err) return res.status(500).json(err);
@@ -226,7 +226,7 @@ app.post('/api/images/', isAuthenticated, upload.single('picture'), function(req
 app.delete('/api/image/:id/', canDeleteImage, function(req, res) {
 	const imageId = req.params.id;
 	if(!imageId){
-		res.status(400).json(`Bad Request`);
+		return res.status(400).json(`Bad Request`);
 	}
 	pictures.findOne({ _id: imageId }, function(error, image) {
 		if (error) return res.status(500).json(error);
@@ -261,24 +261,30 @@ app.get('/api/image/:id/comments/:page/:size/', isAuthenticated, function(req, r
 	if(!imageId){
 		res.status(400).json(`Bad request`);
 	}
-
-	comments.find({ imageId: imageId }).sort({ createdAt: -1 }).exec(function(err, items) {
-		if (err) return res.status(500).end(err.message);
-		else if (items.length === 0){
-			return res.status(200).json({comments:items,previous:1,next:1});
-		}
-		else {
-			let result = {};
-			if (start > 0) {
-				result.previous = page - 1;
-			}
-			if (end < items.length) {
-				result.next = page + 1;
-			}
-			result.comments = items.slice(start, end).reverse();
-			return res.json(result);
+	pictures.findOne({imageId:imageId},function(err,image){
+		if(!image){
+			return res.status(405).json("Invalid image id given");
+		}else{
+			comments.find({ imageId: imageId }).sort({ createdAt: -1 }).exec(function(err, items) {
+				if (err) return res.status(500).end(err.message);
+				else if (items.length === 0){
+					return res.status(200).json({comments:items,previous:1,next:1});
+				}
+				else {
+					let result = {};
+					if (start > 0) {
+						result.previous = page - 1;
+					}
+					if (end < items.length) {
+						result.next = page + 1;
+					}
+					result.comments = items.slice(start, end).reverse();
+					return res.json(result);
+				}
+			});
 		}
 	});
+	
 });
 
 app.post('/api/comments/', isAuthenticated, function(req, res) {
@@ -286,11 +292,20 @@ app.post('/api/comments/', isAuthenticated, function(req, res) {
 		return res.status(400).json("Comment content not provided");
 	}
 	req.body.author = req.username;
-	let comment = new Comment(req.body);
-	comments.insert(comment, function(err, comment) {
+	const {imageId} = req.body;
+	pictures.findOne({_id:imageId},function(err,image){
 		if (err) res.status(500).json(err);
-		else if (comment) return res.json(comment);
+		if(!image){
+			return res.status(403).json("Invalid imageId provided");
+		}else{
+			let comment = new Comment(req.body);
+			comments.insert(comment, function(err, comment) {
+			if (err) res.status(500).json(err);
+			else if (comment) return res.json(comment);
 	});
+		}
+	});
+	
 });
 
 app.delete('/api/comments/:id/', canDeleteComments, function(req, res) {

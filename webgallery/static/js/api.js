@@ -224,12 +224,12 @@ const api = (function() {
 		errorListeners.push(listener);
 	};
 
-	// (function refresh(){
-	//     setTimeout(function(e){
-	//         notifyMessageListeners();
-	//         refresh();
-	//     }, 2000);
-	// }());
+	(function refresh(){
+	    setTimeout(function(e){
+	        notifyMessageListeners();
+	        refresh();
+	    }, 2000);
+	}());
 
 	return module;
 })();
