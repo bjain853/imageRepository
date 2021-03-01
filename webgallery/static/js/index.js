@@ -7,6 +7,20 @@
 		document.querySelector('#alert').style.visibility = 'hidden';
 	});
 
+	api.onGalleryUpdate(function(users){
+		users.forEach(function(user){
+			let element = document.createElement('div');
+			element.id = user._id;
+			element.innerHTML = `<li><button id=${user._id}-gallery-btn >${user._id}</button></li>`;
+			document.querySelector('.galleries').append(element);
+			document.querySelector(`#${user._id}-gallery-btn`).addEventListener('click',function(event){
+				console.log(user._id);
+				api.changeGallery(user._id,renderImage);
+			});
+			
+		});
+	});
+
 	api.onUserUpdate(function(username) {
 		//document.querySelector('#signin_button').style.visibility = username ? 'hidden' : 'visible';
 		document.querySelector('#signout_button').style.visibility = username ? 'visible' : 'hidden';
