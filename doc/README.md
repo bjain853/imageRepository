@@ -5,10 +5,11 @@
 ### Create
 
 - description: create a new comment
-- request: `POST /api/image/:id/comments/`
+- request: `POST /api/comments/`
     - content-type: `application/json`
     - body: object
       - content: (string) the content of the message
+      - imageId : (string) id of the image on which comment was posted.
 - response: 200
     - content-type: `application/json`
     - body: object
@@ -17,18 +18,17 @@
       - author: (string) the authors username
       - content: (int) content of the comment
       - date: (int) date of the comment
-
+- response : 404 
+  - content-type: `application/json`
+    - body : (string) Comment content not provided
 ``` 
-$ curl -X POST 
-       -H "Content-Type: `application/json`" 
-       -d '{"content":"hello world"} 
-       http://localhost:3000/api/image/:id/comments/'
+$ curl -X POST -H "Content-Type: `application/json`"     -d '{"content":"hello world","imageId":"_ejfd4u382"}     http://localhost:3000/api/comments/'
 ```
 
 ### Read
 
-- description: retrieve the comments for a particular page , each page displaying 5 comments 
-- request: `GET /api/image/:id/comments/:page/`   
+- description: retrieve the comments for image with id :id on page number  :page , each page displaying :size comments 
+- request: `GET /api/image/:id/comments/:page/:size/`   
 - response: 200
     - content-type: `application/json`
     - body: list of objects
@@ -36,16 +36,19 @@ $ curl -X POST
       - content: (string) the content of the comment.
       - author: (string) the authors username
       - date: (date) the date when comment was posted
+- response : 404
+  - content-type: `application.json`
+  - body : (string)  Id : :id is invalid
  
 ``` 
-$ curl http://localhost:3000//api/image/_hwehb7438/comments/1/
+$ curl http://localhost:3000/api/image/_hwehb7438/comments/1/4/
 ``` 
   
   
 ### Delete
   
 - description: delete the comment given it's id.
-- request: `DELETE /api/image/comments/:id/`
+- request: `DELETE /api/comments/:id/`
 - response: 200
     - content-type: `application/json`
     - body: object
@@ -53,117 +56,112 @@ $ curl http://localhost:3000//api/image/_hwehb7438/comments/1/
         - content: (string) the content of the comment
         - author: (string) the authors username
         - date: (date) the date of comment
-- response: 404
-    - body: message :id does not exists
+- response: 400
+    - body: Bad Request
+- response : 404 
+  - body :  Comment with id: :id doesn't exist
+- response : 500
+  - body :  Comment id :id can't be deleted
 
 ``` 
-$ curl -X DELETE
-       http://localhost:3000/api/image/comments/_hasgy754/
+$ curl -X DELETE http://localhost:3000/api/comments/_hasgy754/
 ``` 
 
 ## Image API
 
 ### Create
 
-- description: create a new message
-- request: `POST /api/messages/`
-    - content-type: `application/json`
+- description: Upload a new image to the server
+- request: `POST /api/images/`
+    - content-type: `multipart/form-data`
     - body: object
-      - content: (string) the content of the message
-      - author: (string) the authors username
+      - file: (binary file) the image that was uploaded
+      - title: (string) the title of the image
 - response: 200
     - content-type: `application/json`
     - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
+      - _id: (string) the image id
+      - title: (string) the title of image
+      - author: (string) the image uploaders username
+      - date: (int) the number of upvotes
+      - next: Object
+        - _id : (string) id of the next image in list 
+      - previous : Object
+        - _id : (string) id of the previous image in list 
+- response : 500
+  - content-type : `application/json`
+    - body : (string) Image cannot be saved to database
+- response : 501 
+  - content-type :  `application/json`
+    - body : Object 
+      - err : Any error which occured while inserting the image  
+- response : 404
+  - content-type : `application/json`
+  - body : (string) Bad Request 
 
 ``` 
-$ curl -X POST 
-       -H "Content-Type: `application/json`" 
-       -d '{"content":"hello world","author":"me"} 
-       http://localhost:3000/api/messages/'
+$ curl -i -F "title=Batman" -F "picture=@/path/to/pic.jpg" http://localhost:3000/api/images/
 ```
 
 ### Read
 
-- description: retrieve the image before the one whose id is provided. 
-- request: `GET /api/image/:id/prev/`   
+- description: retrieve the image given it's id
+- request: `GET /api/images/:id/`   
 - response: 200
+    - content-type: `image/*`
+    - body: (binary-data) image whose id is provided
+- response : 404
     - content-type: `application/json`
-    - body: 
-      - previous: (string) the _id of the previous image
+      - Image with imageId : id does not exist
  
 ``` 
-$ curl http://localhost:3000/api/image/_nxjabsj987/prev/
+$ curl -b cookie.txt http://localhost:3000/api/images/_nxjabsj987/
 ``` 
-- description: retrieve the last 5 messages 
-- request: `GET /api/image/:id/next/`   
+
+- description: retrieve info about an image
+- request: `GET /api/image/:id/info/`   
 - response: 200
     - content-type: `application/json`
-    - body: 
-      - next: (string) the id of next image
+    - body: object
+      - _id: (string) the image id
+      - title: (string) the title of image
+      - author: (string) the image uploaders username
+      - date: (int) the number of upvotes
+      - next: Object
+        - _id : (string) id of the next image in list 
+      - previous : Object
+        - _id : (string) id of the previous image in list
+- response : 200
+  - content-type:   `application/json` 
+- response : 500
+  - content-type : `application/json`
+  - body : Object 
+  - error : Error occured during querying database.  
+- response : 404
+  - content-type : `application/json`
+  - body :  (string) Image with id :id doesn't exist
+- response : 400
+  - content-type : `application/json`
+    - body : (string) Bad Request 
  
 ``` 
-$ curl http://localhost:3000/api/image/_nxjabsj987/next/
+$ curl -b cookie.txt http://localhost:3000/api/image/_nxjabsj987/info/
 ``` 
+
 - description: gets the info if database of images is empty or not. 
 - request: `GET /api/imagesIsEmpty/`   
 - response: 200
     - content-type: `application/json`
-    - body:
+    - body: Object
       - empty: (boolean) true if there is an image in database, false otherwise.
+- response : 500
+  - content-type : `application/json`
+  - body : Object
+  -  err : error which occured during querying database.
  
 ``` 
-$ curl http://localhost:3000/api/imagesIsEmpty/
+$ curl -b cookie.txt http://localhost:3000/api/imagesIsEmpty/
 ``` 
-
-- description: retrieve the infoformation about image given it's id
-- request: `GET '/api/image/:id/info/`
-- response: 200
-    - content-type: `application/json`
-    - body: object
-      - _id: (string) the message id
-      - author: (string) the authors username
-      - title: (int) the title of image
-      - date : (date) the date of image posted
-- response: 404
-    - body: image id does not exist
-
-``` 
-$ curl http://localhost:3000/api/image/_nxjabsj987/info/
-``` 
- - description: retrieves anyone image from the database.
-- request: `GET '/api/image/default/`
-- response: 200
-    - content-type: `application/json`
-    - body: object
-     - _id: (string) the message id
-      - author: (string) the authors username
-      - title: (int) the title of image
-      - date : (date) the date of image posted
-
-``` 
-$ curl http://localhost:3000/api/image/default/
-```  
- - description: retrieve the actual image file
-- request: `GET '/api/images/:id/`
-- response: 200
-    - content-type: `application/json`
-    - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
-- response: 404
-    - body: message id does not exists
-
-``` 
-$ curl http://localhost:3000/api/image/_jed5672jd9/
-```  
   
 ### Delete
   
@@ -172,122 +170,100 @@ $ curl http://localhost:3000/api/image/_jed5672jd9/
 - response: 200
     - content-type: `application/json`
     - body: object
-     - _id: (string) the message id
-      - author: (string) the authors username
-      - title: (int) the title of image
-      - date : (date) the date of image posted
-- response: 404
-    - body: message :id does not exists
+     - deleted : (boolean) true if image was successfully deleted otherwise false.
+- response: 400
+  - content-type : `application/json`
+    - body: (string) Bad Request
+- response : 404
+  - content-type : `application/json`
+    - body :  (string) Image with id: :id doesn't exist
+- response : 500
+ - content-type : `application/json`
+    - body : Object
+    -  Error: (Object) error which occured while querying the database
+- response : 501
+  - content-type: `application/json`
+    - body : (string) Comments related to image cannot be deleted
+- 
 
 ``` 
-$ curl -X DELETE
-       http://localhost:3000/api/messages/jed5672jd90xg4awo789/
+$ curl -X DELETE http://localhost:3000/api/image/_jed5672j/
 ``` 
 
 ## User API
 
 ### Create
 
-- description: create a new message
-- request: `POST /api/messages/`
+- description: Sign up a new user
+- request: `POST /api/signup/`
     - content-type: `application/json`
-    - body: object
-      - content: (string) the content of the message
-      - author: (string) the authors username
+      - body: object
+        - username: (string) username of user
+        - password: (string) user's password
 - response: 200
     - content-type: `application/json`
-    - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
+      - body: (string) user :username signed up
+- response 409
+  - content-type : `application/json`
+    - body : (string) username :username already exists 
+- response 400
+  - content-type : `application/json`
+    - body : (string) username/password not provided   
+- response 500 
+  - content-type: `application/json`
+    - body : Object
+      - Error : (Object) Error which occured during querying of the database.
 
 ``` 
-$ curl -X POST 
-       -H "Content-Type: `application/json`" 
-       -d '{"content":"hello world","author":"me"} 
-       http://localhost:3000/api/messages/'
+$ curl -X POST -d "username=admin&password=pass4admin" http://localhost:3000/signup/
 ```
+
 
 ### Read
 
-- description: retrieve the last 5 messages 
-- request: `GET /api/messages/[?limit=5]`   
-- response: 200
-    - content-type: `application/json`
-    - body: list of objects
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
- 
-``` 
-$ curl http://localhost:3000/api/messages/
-``` 
-
-- description: retrieve the message id
-- request: `GET /api/messages/:id/`
-- response: 200
+- description: Sign in an existing user
+- request: `POST /api/signin/`
     - content-type: `application/json`
     - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
-- response: 404
-    - body: message id does not exists
-
-``` 
-$ curl http://localhost:3000/api/messages/jed5672jd90xg4awo789/
-``` 
-  
-### Update
-
-- description: upvote or downvote the message id
-- request: `PATCH /api/messages/:id/`
-    - content-type: `application/json`
-    - body: object
-      - action: (string) either `upvote` or `downvote`
+      - username: (string) username of user
+      - password: (string) user's password
 - response: 200
     - content-type: `application/json`
-    - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
+    - body: string
+      - user username signed in
+- response: 401
+  - content-type : `application/json`
+  - body : string
+    - No such username exists 
 - response: 400
-    - body: invalid argument
-- response: 404
-    - body: message :id does not exists
-  
+  - content-type : `application/json`
+  - body : string
+    - Username/Password not provided   
+- response: 500 
+  - content-type: `application/json`
+  - body : string 
+    - err 
+
 ``` 
-$ curl -X PATCH 
-       -H 'Content-Type: application/json'
-       -d '{"action":"upvote"} 
-       http://localhost:3000/api/messages/jed5672jd90xg4awo789/'
+$ curl -X POST -d "username=admin&password=pass4admin" -c cookie.txt http://localhost:3000/api/signin/
 ```
-  
+
+- description : send currently logged in user
+- request: `GET /api/user/`
+- content : null
+- response : 200
+  - content-type: `application/json`
+    - body : Object
+      - User : (string) username of logged in user   
   
 ### Delete
   
-- description: delete the message id
-- request: `DELETE /api/messages/:id/`
+- description: delete the user from server's session
+- request: `DELETE /api/signout/`
 - response: 200
-    - content-type: `application/json`
-    - body: object
-        - _id: (string) the message id
-        - content: (string) the content of the message
-        - author: (string) the authors username
-        - upvote: (int) the number of upvotes
-        - downvote: (int) the number of downvotes
-- response: 404
-    - body: message :id does not exists
+    - content-type: `text/html`
+    - body: (webpage) login.html
 
 ``` 
-$ curl -X DELETE
-       http://localhost:3000/api/messages/jed5672jd90xg4awo789/
+$ curl -X GET http://localhost:3000/api/signout/
 ``` 

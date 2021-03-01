@@ -163,9 +163,9 @@ const api = (function() {
 	module.addComment = function(imageId, content) {
 		send(
 			'POST',
-			`/api/image/${imageId}/comments/`,
-			{ imageId: imageId,  content: content },
-			function(err, res) {
+			`/api/comments/`,
+			{ content: content,imageId:imageId },
+			function(err) {
 				if (err) return notifyErrorListeners(err);
 				notifyCommentListeners(imageId);
 			}
@@ -174,7 +174,7 @@ const api = (function() {
 
 	// delete a comment to an image
 	module.deleteComment = function(commentId) {
-		send('DELETE', `/api/image/comments/${commentId}/`, null, function(err, res) {
+		send('DELETE', `/api/comments/${commentId}/`, null, function(err, res) {
 			if (err) return notifyErrorListeners(err);
 			notifyCommentListeners(res.imageId);
 		});
